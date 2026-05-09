@@ -1,0 +1,122 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "predict": "Diagnostic",
+    "history": "Historique",
+    "profile": "Mon Profil",
+    "logout": "Déconnexion"
+  },
+  "hero": {
+    "title_start": "Identifiez les",
+    "success": "difficultés",
+    "title_end": "d'apprentissage de vos élèves.",
+    "subtitle": "Un système intelligent pour évaluer les besoins pédagogiques et anticiper les risques d'échec scolaire.",
+    "model": "Score R² (Fiabilité)"
+  },
+  "button": {
+    "start": "Lancer le diagnostic",
+    "upload": "Importer CSV",
+    "submit": "Analyser",
+    "predict": "Lancer le Diagnostic LearnDiag",
+    "login": "Se connecter",
+    "register": "S'inscrire",
+    "send_file": "Lancer l'analyse en lot"
+  },
+  "status": {
+    "calculating": "Analyse en cours...",
+    "processing": "Traitement du fichier..."
+  },
+  "error": {
+    "server": "Erreur serveur",
+    "no_history": "Aucun historique disponible",
+    "auth_failed": "Identifiants incorrects",
+    "forbidden": "Accès réservé aux enseignants"
+  },
+  "profile": {
+    "title": "Configuration du Profil",
+    "description": "Définissez vos variables d'apprentissage par défaut. Elles seront automatiquement utilisées pour vos diagnostics LearnDiag.",
+    "parent_contact": "Contact Parent",
+    "parent_desc": "Si renseigné, une copie des rapports par email sera automatiquement envoyée à cette adresse.",
+    "parent_email": "Email des parents",
+    "saving": "Sauvegarde...",
+    "saved": "Profil Enregistré !",
+    "update_btn": "Mettre à jour mon profil",
+    "banner_title": "Optimisez vos diagnostics !",
+    "banner_desc": "Complétez votre profil pour pré-remplir automatiquement les formulaires.",
+    "banner_btn": "Configurer mon profil"
+  },
+  "history": {
+    "title": "Analyses récentes"
+  },
+  "batch": {
+    "title": "Diagnostic Groupé (Enseignants)",
+    "subtitle": "Traitement automatique de toute une classe via un fichier CSV.",
+    "results": "Résultats de l'analyse groupée",
+    "student": "Élève",
+    "advice": "Conseil"
+  },
+  "recommendation": {
+    "title": "Stratégie Pédagogique",
+    "placeholder": "Analyse requise"
+  },
+  "shap": {
+    "title": "Facteurs d'Influence (SHAP)",
+    "teacher_analysis": "Analyse détaillée pour l'enseignant :",
+    "explanation": "L'algorithme SHAP dévoile comment chaque variable a influencé la note finale de l'élève par rapport au score moyen global (Valeur de base : {{baseValue}}). Les facteurs en vert sont des leviers de réussite, tandis que ceux en rouge constituent des zones de risque à traiter prioritairement.",
+    "impact": "Impact :",
+    "improves": "Améliore la performance de {{value}} pts",
+    "penalizes": "Pénalise la performance de {{value}} pts"
+  },
+  "auth": {
+    "welcome_back": "Accès au tableau de bord",
+    "create_account": "Créer un compte professionnel",
+    "no_account": "Pas de compte ? S'inscrire",
+    "has_account": "Déjà membre ? Se connecter",
+    "full_name": "Nom complet",
+    "email": "Adresse Email",
+    "password": "Mot de passe"
+  },
+  "fields": {
+    "Hours_Studied": "Heures d'étude",
+    "Attendance": "Taux de présence (%)",
+    "Parental_Involvement": "Implication parentale",
+    "Access_to_Resources": "Accès aux ressources",
+    "Extracurricular_Activities": "Activités extrascolaires",
+    "Sleep_Hours": "Heures de sommeil",
+    "Previous_Scores": "Scores précédents",
+    "Motivation_Level": "Niveau de motivation",
+    "Internet_Access": "Accès Internet",
+    "Tutoring_Sessions": "Séances de tutorat",
+    "Family_Income": "Revenu familial",
+    "Teacher_Quality": "Qualité de l'enseignant",
+    "School_Type": "Type d'école",
+    "Peer_Influence": "Influence des pairs",
+    "Physical_Activity": "Activité physique",
+    "Learning_Disabilities": "Troubles d'apprentissage",
+    "Parental_Education_Level": "Éducation des parents",
+    "Distance_from_Home": "Distance domicile-école",
+    "Gender": "Genre"
+  },
+  "options": {
+    "Low": "Peu / Faible",
+    "Medium": "Normal / Moyen",
+    "High": "Beaucoup / Élevé",
+    "Yes": "Oui",
+    "No": "Non",
+    "Positive": "Positive (Encourageante)",
+    "Neutral": "Neutre",
+    "Negative": "Négative (Distrayante)",
+    "Public": "Publique",
+    "Private": "Privée",
+    "High School": "Lycée",
+    "College": "Université",
+    "Postgraduate": "Post-universitaire",
+    "Near": "Proche",
+    "Moderate": "Modérée",
+    "Far": "Éloignée",
+    "Male": "Garçon",
+    "Female": "Fille",
+    "Student": "Élève",
+    "Teacher": "Enseignant"
+  }
+}

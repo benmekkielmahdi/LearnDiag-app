@@ -1,0 +1,97 @@
+# docker-compose.yml
+# Orchestration complète de l'application en 3 services :
+#   - frontend : React (Vite) — port 3000
+#   - backend  : FastAPI — port 8000
+#   - db       : PostgreSQL — port 5432 (optionnel, SQLite par défaut)
+#
+# Lancement complet (depuis le dossier student-app/) :
+#   docker compose up --build
+#
+# Lancement en mode développement (sans Docker, plus simple) :
+#   cd backend  && uvicorn main:app --reload --port 8000
+#   cd frontend && npm run dev
+
+version: "3.9"
+
+services:
+
+  # ── Backend FastAPI ─────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Monte le modèle .pkl depuis le répertoire local dans le conteneur
+      # Régénérez le .pkl dans le notebook et il sera automatiquement disponible
+      - ./backend/model_student_performance.pkl:/app/model_student_performance.pkl:ro
+      # Volume persistant pour la base SQLite
+      - backend_data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATABASE_URL=sqlite:///./data/predictions.db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # ── Frontend React ──────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:80"
+    environment:
+      # URL de l'API backend vue depuis le navigateur de l'utilisateur
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  backend_data:
+    driver: local
+
+---
+# ── Dockerfile.backend ──────────────────────────────────────────────────────
+# (Créer ce fichier dans ./backend/Dockerfile.backend)
+#
+# FROM python:3.11-slim
+#
+# WORKDIR /app
+#
+# # Installation des dépendances système (nécessaire pour certains packages C)
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#     build-essential curl && rm -rf /var/lib/apt/lists/*
+#
+# COPY requirements.txt .
+# RUN pip install --no-cache-dir -r requirements.txt
+#
+# COPY main.py .
+#
+# # Port exposé
+# EXPOSE 8000
+#
+# # Démarrage avec uvicorn (workers=1 pour garder le modèle partagé en mémoire)
+# CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+#
+# ── Dockerfile.frontend ─────────────────────────────────────────────────────
+# (Créer ce fichier dans ./frontend/Dockerfile.frontend)
+#
+# FROM node:20-alpine AS builder
+# WORKDIR /app
+# COPY package*.json .
+# RUN npm ci
+# COPY . .
+# RUN npm run build           # Produit le dossier dist/
+#
+# FROM nginx:alpine
+# COPY --from=builder /app/dist /usr/share/nginx/html
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# EXPOSE 80
+# CMD ["nginx", "-g", "daemon off;"]

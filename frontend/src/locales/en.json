@@ -1,0 +1,120 @@
+{
+  "nav": {
+    "home": "Home",
+    "predict": "Diagnostic",
+    "history": "History",
+    "profile": "My Profile",
+    "logout": "Logout"
+  },
+  "hero": {
+    "title_start": "Identify the",
+    "success": "difficulties",
+    "title_end": "of your students.",
+    "subtitle": "An intelligent system to evaluate pedagogical needs and anticipate academic failure risks.",
+    "model": "R² Score (Reliability)"
+  },
+  "button": {
+    "start": "Start diagnostic",
+    "upload": "Import CSV",
+    "submit": "Analyze",
+    "predict": "Start LearnDiag Diagnostic",
+    "login": "Sign in",
+    "register": "Sign up",
+    "send_file": "Start batch analysis"
+  },
+  "status": {
+    "calculating": "Analyzing...",
+    "processing": "Processing file..."
+  },
+  "error": {
+    "server": "Server error",
+    "no_history": "No history available",
+    "auth_failed": "Invalid credentials",
+    "forbidden": "Reserved for teachers"
+  },
+  "profile": {
+    "title": "Profile Configuration",
+    "description": "Set your default learning variables. They will be automatically used for your LearnDiag diagnostics.",
+    "parent_contact": "Parent Contact",
+    "parent_desc": "If provided, a copy of email reports will be automatically sent to this address.",
+    "parent_email": "Parent Email",
+    "saving": "Saving...",
+    "saved": "Profile Saved!",
+    "update_btn": "Update my profile",
+    "banner_title": "Optimize your diagnostics!",
+    "banner_desc": "Complete your profile to automatically pre-fill the forms.",
+    "banner_btn": "Configure my profile"
+  },
+  "history": {
+    "title": "Recent Analyses"
+  },
+  "batch": {
+    "title": "Group Diagnostic (Teachers)",
+    "subtitle": "Automatic processing of an entire class via CSV file.",
+    "results": "Group analysis results",
+    "student": "Student",
+    "advice": "Advice"
+  },
+  "recommendation": {
+    "title": "Pedagogical Strategy",
+    "placeholder": "Analysis required"
+  },
+  "shap": {
+    "title": "Influence Factors (SHAP)",
+    "teacher_analysis": "Detailed analysis for teacher:",
+    "explanation": "The SHAP algorithm reveals how each variable influenced the student's final score relative to the global average score (Base value: {{baseValue}}). Green factors are success drivers, while red ones represent risk areas to be addressed with priority.",
+    "impact": "Impact:",
+    "improves": "Improves performance by {{value}} pts",
+    "penalizes": "Penalizes performance by {{value}} pts"
+  },
+  "auth": {
+    "welcome_back": "Dashboard Access",
+    "create_account": "Create professional account",
+    "no_account": "No account? Register",
+    "has_account": "Already a member? Login",
+    "full_name": "Full Name",
+    "email": "Email Address",
+    "password": "Password"
+  },
+  "fields": {
+    "Hours_Studied": "Hours Studied",
+    "Attendance": "Attendance Rate (%)",
+    "Parental_Involvement": "Parental Involvement",
+    "Access_to_Resources": "Access to Resources",
+    "Extracurricular_Activities": "Extracurricular Activities",
+    "Sleep_Hours": "Sleep Hours",
+    "Previous_Scores": "Previous Scores",
+    "Motivation_Level": "Motivation Level",
+    "Internet_Access": "Internet Access",
+    "Tutoring_Sessions": "Tutoring Sessions",
+    "Family_Income": "Family Income",
+    "Teacher_Quality": "Teacher Quality",
+    "School_Type": "School Type",
+    "Peer_Influence": "Peer Influence",
+    "Physical_Activity": "Physical Activity",
+    "Learning_Disabilities": "Learning Disabilities",
+    "Parental_Education_Level": "Parental Education",
+    "Distance_from_Home": "Distance from Home",
+    "Gender": "Gender"
+  },
+  "options": {
+    "Low": "Low",
+    "Medium": "Medium",
+    "High": "High",
+    "Yes": "Yes",
+    "No": "No",
+    "Positive": "Positive",
+    "Neutral": "Neutral",
+    "Negative": "Negative",
+    "Public": "Public",
+    "Private": "Private",
+    "High School": "High School",
+    "College": "College",
+    "Postgraduate": "Postgraduate",
+    "Near": "Near",
+    "Moderate": "Moderate",
+    "Far": "Far",
+    "Male": "Male",
+    "Female": "Female"
+  }
+}
