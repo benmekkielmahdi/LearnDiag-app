@@ -6,12 +6,19 @@
     "profile": "My Profile",
     "logout": "Logout"
   },
-  "hero": {
+  "hero_teacher": {
     "title_start": "Identify the",
     "success": "difficulties",
     "title_end": "of your students.",
     "subtitle": "An intelligent system to evaluate pedagogical needs and anticipate academic failure risks.",
     "model": "R² Score (Reliability)"
+  },
+  "hero_apprenant": {
+    "title_start": "Boost your",
+    "success": "potential",
+    "title_end": "and master your success.",
+    "subtitle": "Discover your performance drivers and receive personalized advice to optimize your learning.",
+    "model": "AI Accuracy"
   },
   "button": {
     "start": "Start diagnostic",

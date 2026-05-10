@@ -14,6 +14,13 @@ from typing import Any, List, Optional, Dict
 from datetime import datetime
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.units import inch
+from io import BytesIO
+from fastapi.responses import StreamingResponse
 
 load_dotenv()
 
@@ -119,10 +126,20 @@ class ChatMessage(BaseModel):
     context: Optional[str] = None
 
 @app.post("/chat", tags=["AI Assistant"])
-async def chat_with_assistant(chat_input: ChatMessage):
-    system_prompt = "Tu es l'assistant intelligent de LearnDiag. Ton but est d'aider les enseignants et les élèves à comprendre les difficultés d'apprentissage et à trouver des stratégies pédagogiques. Sois concis, encourageant et professionnel."
+async def chat_with_assistant(
+    chat_input: ChatMessage,
+    current_user: User = Depends(get_current_user)
+):
+    role_instruction = ""
+    if current_user.role == 'enseignant':
+        role_instruction = "Tu t'adresses à un Enseignant. Utilise un ton professionnel, analytique et aide-le à gérer ses élèves et à optimiser sa pédagogie."
+    else:
+        role_instruction = "Tu t'adresses directement à un Apprenant (Élève). Utilise un ton encourageant, simple et donne-lui des conseils concrets pour améliorer sa propre réussite."
+
+    system_prompt = f"Tu es l'assistant intelligent de LearnDiag. {role_instruction} Sois concis et bienveillant."
+    
     if chat_input.context:
-        system_prompt += f"\n\nVoici le contexte actuel (stratégie pédagogique générée pour l'élève) :\n\"{chat_input.context}\"\nTu dois aider l'utilisateur à approfondir cette stratégie, lui donner des conseils pratiques pour la mettre en place, ou répondre à ses questions sur ce diagnostic précis."
+        system_prompt += f"\n\nVoici le contexte actuel (stratégie pédagogique générée) :\n\"{chat_input.context}\"\nTu dois aider l'utilisateur à approfondir cette stratégie ou répondre à ses questions."
 
     try:
         response = ollama.chat(model=OLLAMA_MODEL, messages=[
@@ -174,81 +191,60 @@ def _create_pdf(req: PDFReportRequest) -> FPDF:
     pdf.add_page()
     
     full_name = str(req.full_name or "Apprenant")
-    score = req.score if req.score is not None else 0
-    categorie = str(req.categorie or "Non défini")
-    recommandation = str(req.recommandation or "Aucune recommandation.")
+    score = req.score
+    categorie = req.categorie
+    recommandation = req.recommandation
     
-    # --- HEADER PREMIUM ---
-    pdf.set_fill_color(37, 99, 235) # Vibrant Blue (Application Color)
-    pdf.rect(0, 0, 210, 55, 'F')
+    # --- HEADER ---
+    pdf.set_fill_color(15, 23, 42) # Deep Slate
+    pdf.rect(0, 0, 210, 50, 'F')
     
     pdf.set_text_color(255, 255, 255)
     pdf.set_y(15)
-    pdf.set_font("helvetica", 'B', 28)
-    pdf.cell(0, 10, "LEARNDIAG", ln=1, align='C')
-    
-    pdf.set_font("helvetica", 'B', 10)
-    pdf.set_text_color(148, 163, 184)
-    pdf.cell(0, 8, sanitize_text("LEARNING DIAGNOSTIC PLATEFORME"), ln=1, align='C')
-    
-    pdf.set_y(35)
-    pdf.set_font("helvetica", 'I', 11)
-    pdf.set_text_color(226, 232, 240)
-    pdf.cell(0, 10, sanitize_text("Rapport d'Expertise Pédagogique Assisté par IA"), ln=1, align='C')
-    
-    # --- INFO ELEVE ---
-    pdf.set_y(65)
-    pdf.set_text_color(100, 116, 139)
-    pdf.set_font("helvetica", 'B', 10)
-    pdf.cell(0, 5, sanitize_text("APPRENANT CONCERNÉ :"), ln=1, align='L')
-    
-    pdf.set_text_color(30, 41, 59)
-    pdf.set_font("helvetica", 'B', 16)
-    pdf.cell(0, 10, sanitize_text(full_name), ln=1, align='L')
+    pdf.set_font("helvetica", 'B', 24)
+    pdf.cell(0, 10, "LEARNDIAG AI - RAPPORT", ln=1, align='C')
     
     pdf.set_font("helvetica", '', 10)
-    pdf.set_text_color(100, 116, 139)
-    pdf.cell(0, 5, f"Date du rapport : {datetime.now().strftime('%d/%m/%Y à %H:%M')}", ln=1)
+    pdf.set_text_color(148, 163, 184)
+    pdf.cell(0, 8, sanitize_text("ANALYSE DES FACTEURS DE RÉUSSITE SCOLAIRE"), ln=1, align='C')
     
-    # --- SECTION I : SYNTHÈSE DU DIAGNOSTIC GLOBAL ---
+    # --- INFOS ---
+    pdf.set_y(60)
+    pdf.set_text_color(30, 41, 59)
+    pdf.set_font("helvetica", 'B', 12)
+    pdf.cell(100, 10, sanitize_text(f"ÉLÈVE : {full_name.upper()}"), ln=0)
+    pdf.set_font("helvetica", '', 10)
+    pdf.set_text_color(100, 116, 139)
+    pdf.cell(90, 10, f"Date : {datetime.now().strftime('%d/%m/%Y')}", ln=1, align='R')
+    
+    pdf.set_draw_color(226, 232, 240)
+    pdf.line(10, 72, 200, 72)
+    
+    # --- SCORE BOX ---
     pdf.set_y(85)
     pdf.set_fill_color(248, 250, 252)
-    pdf.rect(10, 85, 190, 45, 'F')
+    pdf.rect(10, 85, 190, 40, 'F')
     
-    pdf.set_xy(15, 90)
-    pdf.set_font("helvetica", 'B', 12)
+    pdf.set_xy(15, 92)
+    pdf.set_font("helvetica", 'B', 14)
     pdf.set_text_color(15, 23, 42)
-    pdf.cell(0, 8, sanitize_text("I. SYNTHÈSE DU DIAGNOSTIC GLOBAL"), ln=1)
+    pdf.cell(0, 8, sanitize_text("SYNTHÈSE DU DIAGNOSTIC"), ln=1)
     
-    pdf.set_xy(15, 100)
-    pdf.set_font("helvetica", '', 10)
-    pdf.set_text_color(71, 85, 105)
-    pdf.cell(90, 8, sanitize_text("Indice de performance prédit :"), ln=0)
-    pdf.cell(90, 8, sanitize_text("Niveau d'alerte pédagogique :"), ln=1)
-    
-    pdf.set_xy(15, 108)
-    pdf.set_font("helvetica", 'B', 24)
+    pdf.set_xy(15, 105)
+    pdf.set_font("helvetica", 'B', 28)
     pdf.set_text_color(37, 99, 235)
     pdf.cell(90, 12, f"{score} / 100", ln=0)
     
     status_color = (220, 38, 38)
     if score > 75: status_color = (22, 163, 74)
-    elif score > 50: status_color = (234, 179, 8)
+    elif score > 50: status_color = (217, 119, 6)
     
     pdf.set_text_color(*status_color)
-    pdf.set_font("helvetica", 'B', 18)
-    pdf.cell(90, 12, sanitize_text(categorie.upper()), ln=1)
+    pdf.set_font("helvetica", 'B', 16)
+    pdf.cell(90, 12, sanitize_text(categorie.upper()), ln=1, align='R')
     
-    # --- SECTION II : ANALYSE DES FACTEURS ---
+    # --- RECOMMANDATIONS ---
     pdf.set_y(140)
-    pdf.set_font("helvetica", 'B', 13)
-    pdf.set_text_color(15, 23, 42)
-    pdf.cell(0, 10, sanitize_text("II. ANALYSE QUANTITATIVE DES FACTEURS D'APPRENTISSAGE"), ln=1)
-    pdf.set_draw_color(226, 232, 240)
-    pdf.line(10, 150, 200, 150)
-    pdf.ln(5)
-    
-    pdf.set_font("helvetica", '', 9)
     pdf.set_fill_color(241, 245, 249)
     
     items = list(req.inputs.items()) if req.inputs else []
@@ -587,7 +583,11 @@ def _preprocess(student: StudentInput) -> np.ndarray:
     mappings = app_state["mappings"]
     for col, mapping in mappings.items():
         if col in df.columns:
-            df[col] = df[col].map(mapping)
+            # map returns NaN for unknown values; we replace them with 0 (default category)
+            df[col] = df[col].map(mapping).fillna(0)
+    
+    # Ensure no other NaNs exist in numerical columns
+    df = df.fillna(df.mean(numeric_only=True)).fillna(0)
     
     X_scaled = app_state["scaler"].transform(df)
     return X_scaled
@@ -604,9 +604,18 @@ def _categorize(score: float):
     else:
         return "Excellent", "#639922", "Excellence: challenges avancés pour enrichir."
 
-async def generate_ai_recommendation(student: StudentInput, score: float, category: str):
+async def generate_ai_recommendation(student: StudentInput, score: float, category: str, role: str = "enseignant", user_name: str = "l'apprenant"):
+    role_context = ""
+    if role == "enseignant":
+        role_context = f"En tant qu'expert en ingénierie pédagogique, réalise une analyse détaillée pour un ENSEIGNANT concernant l'élève {user_name}. Parle de l'élève à la troisième personne."
+        instructions = "3. Un conseil méthodologique direct pour l'enseignant sur la gestion de cet élève."
+    else:
+        role_context = f"En tant qu'expert en ingénierie pédagogique, réalise une analyse détaillée directement pour l'apprenant {user_name}. Parle-lui directement à la deuxième personne du singulier (tu) ou du pluriel (vous) selon le cas, et commence par 'Bonjour {user_name},'."
+        instructions = "3. Un conseil d'organisation personnel immédiat pour réussir tes prochains examens."
+
     prompt = f"""
-    En tant qu'expert en ingénierie pédagogique et neuroéducation, réalise une analyse détaillée et structurée de ce profil d'élève :
+    {role_context}
+    Voici le profil à analyser :
     - Heures d'étude : {student.Hours_Studied}h
     - Présence : {student.Attendance}%
     - Heures de sommeil : {student.Sleep_Hours}h
@@ -617,12 +626,12 @@ async def generate_ai_recommendation(student: StudentInput, score: float, catego
     - Accès aux ressources : {student.Access_to_Resources}
     - Score diagnostiqué par le modèle IA : {score}/100 (Catégorie : {category})
 
-    Fournis une stratégie pédagogique complète et détaillée. Ta réponse doit inclure :
-    1. Un court diagnostic psychopédagogique de la situation (points forts et risques).
-    2. Trois axes d'intervention prioritaires et personnalisés (actions concrètes pour l'élève ou les parents).
-    3. Un conseil méthodologique direct pour l'enseignant.
+    Fournis une stratégie structurée incluant :
+    1. Un court diagnostic psychopédagogique (points forts et risques).
+    2. Trois axes d'intervention prioritaires et personnalisés.
+    {instructions}
     
-    Sois professionnel, bienveillant et réponds en français. Utilise des sauts de ligne pour structurer ton texte.
+    Sois professionnel, bienveillant et réponds en français.
     """
     try:
         response = ollama.chat(model=OLLAMA_MODEL, messages=[
@@ -640,11 +649,24 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Email already registered")
     
     hashed_pwd = get_password_hash(user_data.password)
+    # Valeurs neutres par défaut pour les 19 variables
+    neutral_defaults = {
+        "Hours_Studied": 0, "Attendance": 0, "Parental_Involvement": "Medium",
+        "Access_to_Resources": "Medium", "Extracurricular_Activities": "No",
+        "Sleep_Hours": 0, "Previous_Scores": 0, "Motivation_Level": "Medium",
+        "Internet_Access": "No", "Tutoring_Sessions": 0, "Family_Income": "Medium",
+        "Teacher_Quality": "Medium", "School_Type": "Public", "Peer_Influence": "Neutral",
+        "Physical_Activity": 0, "Learning_Disabilities": "No",
+        "Parental_Education_Level": "High School", "Distance_from_Home": "Moderate",
+        "Gender": "Male"
+    }
+
     new_user = User(
         email=user_data.email, 
         hashed_password=hashed_pwd, 
         full_name=user_data.full_name,
-        role=user_data.role
+        role='apprenant', # Identifiant technique mis à jour
+        profile_data=neutral_defaults
     )
     db.add(new_user)
     db.commit()
@@ -686,7 +708,7 @@ async def predict(
     categorie, couleur, rec_base = _categorize(score)
     
     # Appel à l'IA locale pour une recommandation avancée
-    ai_rec = await generate_ai_recommendation(student, score, categorie)
+    ai_rec = await generate_ai_recommendation(student, score, categorie, role=current_user.role, user_name=current_user.full_name)
     recommandation = ai_rec if ai_rec else rec_base
     
     # Save to DB
@@ -880,6 +902,76 @@ def get_metrics():
         "RMSE": metrics.get("RMSE", 4.05),
         "features_count": len(app_state.get("features", []))
     }
+
+@app.post("/export-pdf", tags=["Diagnostic"])
+async def export_pdf(data: Dict[str, Any], current_user: User = Depends(get_current_user)):
+    """Génère un rapport de diagnostic au format PDF."""
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)
+    styles = getSampleStyleSheet()
+    
+    # Custom Styles
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=24,
+        textColor=colors.HexColor("#3b82f6"),
+        alignment=1,
+        spaceAfter=30
+    )
+    
+    content = []
+    
+    # Title
+    content.append(Paragraph("Rapport de Diagnostic LearnDiag", title_style))
+    content.append(Spacer(1, 0.2 * inch))
+    
+    # User Info
+    content.append(Paragraph(f"<b>Utilisateur :</b> {current_user.full_name}", styles['Normal']))
+    content.append(Paragraph(f"<b>Date :</b> {datetime.now().strftime('%d/%m/%Y %H:%M')}", styles['Normal']))
+    content.append(Spacer(1, 0.3 * inch))
+    
+    # Result Box
+    score = data.get('score_predit', 0)
+    cat = data.get('categorie', 'N/A')
+    color = data.get('couleur', '#000000')
+    
+    score_data = [
+        [Paragraph(f"<font color='white' size='14'>SCORE DE PERFORMANCE PRÉDIT</font>", styles['Normal'])],
+        [Paragraph(f"<font color='white' size='48'><b>{score:.0f}%</b></font>", styles['Normal'])],
+        [Paragraph(f"<font color='white' size='16'><b>{cat.upper()}</b></font>", styles['Normal'])]
+    ]
+    
+    t = Table(score_data, colWidths=[4*inch])
+    t.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,-1), colors.HexColor(color)),
+        ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 20),
+        ('TOPPADDING', (0,0), (-1,-1), 20)
+    ]))
+    content.append(t)
+    content.append(Spacer(1, 0.4 * inch))
+    
+    # AI Recommendation
+    content.append(Paragraph("STRATÉGIE PÉDAGOGIQUE RECOMMANDÉE", styles['Heading2']))
+    rec_text = data.get('recommandation', "Aucune recommandation disponible.")
+    # Nettoyage minimal pour ReportLab (caractères spéciaux)
+    safe_rec = rec_text.replace('\n', '<br/>').replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+    content.append(Paragraph(safe_rec, styles['Normal']))
+    
+    # Footer
+    content.append(Spacer(1, 1 * inch))
+    content.append(Paragraph("<hr/>", styles['Normal']))
+    content.append(Paragraph("Généré par LearnDiag AI Engine v4.0", ParagraphStyle('Footer', parent=styles['Normal'], fontSize=8, alignment=1, textColor=colors.grey)))
+    
+    doc.build(content)
+    buffer.seek(0)
+    
+    filename = f"Diagnostic_{current_user.full_name.replace(' ', '_')}.pdf"
+    return StreamingResponse(buffer, media_type="application/pdf", headers={
+        "Content-Disposition": f"attachment; filename={filename}"
+    })
 
 @app.get("/health", tags=["Monitoring"])
 def health_check():

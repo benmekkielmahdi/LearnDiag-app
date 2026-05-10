@@ -18,7 +18,7 @@ export const FormattedText = ({ text, className }: { text: string, className?: s
       <div key={i} className={cn("mb-1.5", isBullet && "pl-5 relative before:content-['•'] before:absolute before:left-1.5 before:text-primary")}>
         {parts.map((part, j) => {
           if (part.startsWith('**') && part.endsWith('**')) {
-            return <strong key={j} className="font-bold text-foreground">{part.slice(2, -2)}</strong>;
+            return <strong key={j} className="font-bold">{part.slice(2, -2)}</strong>;
           }
           return part;
         })}

@@ -15,7 +15,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState<'eleve' | 'enseignant'>('eleve');
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -38,7 +38,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
           email: formData.email,
           password: formData.password,
           full_name: formData.full_name,
-          role: role
+
         });
         const data = await predictionService.login({
           email: formData.email,

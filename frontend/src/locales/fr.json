@@ -6,12 +6,19 @@
     "profile": "Mon Profil",
     "logout": "Déconnexion"
   },
-  "hero": {
+  "hero_teacher": {
     "title_start": "Identifiez les",
     "success": "difficultés",
-    "title_end": "d'apprentissage de vos élèves.",
+    "title_end": "d'apprentissage de vos apprenants.",
     "subtitle": "Un système intelligent pour évaluer les besoins pédagogiques et anticiper les risques d'échec scolaire.",
     "model": "Score R² (Fiabilité)"
+  },
+  "hero_apprenant": {
+    "title_start": "Boostez votre",
+    "success": "potentiel",
+    "title_end": "et maîtrisez votre réussite.",
+    "subtitle": "Découvrez vos leviers de performance et recevez des conseils personnalisés pour optimiser votre apprentissage.",
+    "model": "Précision de l'IA"
   },
   "button": {
     "start": "Lancer le diagnostic",
@@ -52,7 +59,7 @@
     "title": "Diagnostic Groupé (Enseignants)",
     "subtitle": "Traitement automatique de toute une classe via un fichier CSV.",
     "results": "Résultats de l'analyse groupée",
-    "student": "Élève",
+    "student": "Apprenant",
     "advice": "Conseil"
   },
   "recommendation": {
@@ -62,7 +69,7 @@
   "shap": {
     "title": "Facteurs d'Influence (SHAP)",
     "teacher_analysis": "Analyse détaillée pour l'enseignant :",
-    "explanation": "L'algorithme SHAP dévoile comment chaque variable a influencé la note finale de l'élève par rapport au score moyen global (Valeur de base : {{baseValue}}). Les facteurs en vert sont des leviers de réussite, tandis que ceux en rouge constituent des zones de risque à traiter prioritairement.",
+    "explanation": "L'algorithme SHAP dévoile comment chaque variable a influencé la note finale de l'apprenant par rapport au score moyen global (Valeur de base : {{baseValue}}). Les facteurs en vert sont des leviers de réussite, tandis que ceux en rouge constituent des zones de risque à traiter prioritairement.",
     "impact": "Impact :",
     "improves": "Améliore la performance de {{value}} pts",
     "penalizes": "Pénalise la performance de {{value}} pts"
@@ -116,7 +123,7 @@
     "Far": "Éloignée",
     "Male": "Garçon",
     "Female": "Fille",
-    "Student": "Élève",
+    "Student": "Apprenant",
     "Teacher": "Enseignant"
   }
 }

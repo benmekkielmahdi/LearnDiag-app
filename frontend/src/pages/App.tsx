@@ -324,6 +324,8 @@ const App = () => {
 
   if (!token) return <Auth onLogin={handleLogin} />;
 
+  const heroKey = role === 'enseignant' ? 'hero_teacher' : 'hero_apprenant';
+
   return (
     <div className="min-h-screen bg-background selection:bg-primary/20">
       {/* Header / Navbar */}
@@ -365,7 +367,9 @@ const App = () => {
             <ThemeToggle />
             <div className="flex items-center gap-3 pl-6 border-l border-border">
               <div className="hidden sm:block text-right">
-                <div className="text-xs font-black uppercase tracking-tighter opacity-40">{role}</div>
+                <div className="text-xs font-black uppercase tracking-tighter opacity-40">
+                  {role === 'enseignant' ? t('options.Teacher') : t('options.Student')}
+                </div>
                 <div className="text-sm font-bold truncate max-w-[120px]">{fullName}</div>
               </div>
               <button 
@@ -433,7 +437,7 @@ const App = () => {
             >
               <div className="flex items-center gap-2">
                 <ShieldCheck size={16} className="text-primary" />
-                {t('hero.model')} : <span className="text-foreground">{(metrics?.R2 ? metrics.R2 * 100 : 85.4).toFixed(1)}%</span>
+                {t(`${heroKey}.model`)} : <span className="text-foreground">{(metrics?.R2 ? metrics.R2 * 100 : 85.4).toFixed(1)}%</span>
               </div>
               <div className="h-1 w-1 bg-border rounded-full" />
               <div className="flex items-center gap-2">
@@ -442,10 +446,10 @@ const App = () => {
               </div>
             </motion.div>
             <h1 className="text-6xl xl:text-7xl font-black leading-[1.1] tracking-tight">
-              {t('hero.title_start')} <span className="gradient-text">{t('hero.success')}</span> {t('hero.title_end')}
+              {t(`${heroKey}.title_start`)} <span className="gradient-text">{t(`${heroKey}.success`)}</span> {t(`${heroKey}.title_end`)}
             </h1>
             <p className="text-xl text-foreground/60 leading-relaxed max-w-xl">
-              {t('hero.subtitle')}
+              {t(`${heroKey}.subtitle`)}
             </p>
             <div className="flex items-center gap-6 pt-4">
               <a href="#form-section" className="btn-primary">
@@ -830,7 +834,7 @@ const App = () => {
                           <BrainCircuit size={20} />
                           <span className="text-xs font-black uppercase tracking-widest">Effectif</span>
                         </div>
-                        <div className="text-3xl font-black">{batchResults.length} élèves</div>
+                        <div className="text-3xl font-black">{batchResults.length} apprenants</div>
                       </div>
                       <div className="p-6 glass-card border-l-4 border-emerald-500 bg-emerald-500/5">
                         <div className="flex items-center gap-3 mb-2 text-emerald-500">
@@ -941,7 +945,7 @@ const App = () => {
 
                   <div className="space-y-4">
                     <div className="flex items-center justify-between px-4">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Détails par élève</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Détails par apprenant</span>
                       <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Trié par urgence</span>
                     </div>
                     {batchResults.map((res, idx) => (

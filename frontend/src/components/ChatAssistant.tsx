@@ -127,10 +127,10 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
               y: 0, 
               scale: 1,
               width: isMaximized ? 'min(90vw, 800px)' : 'min(90vw, 400px)',
-              height: isMaximized ? 'min(90vh, 700px)' : '500px'
+              height: isMaximized ? 'min(90vh, 700px)' : '550px'
             }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="mb-4 bg-card/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300"
+            className="mb-4 bg-card/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/20 dark:border-white/5 rounded-[2rem] shadow-2xl flex flex-col overflow-hidden transition-all duration-300"
           >
             {/* Header */}
             <div className="p-4 bg-primary text-white flex items-center justify-between">
@@ -150,7 +150,6 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
                 <button 
                   onClick={() => setIsMaximized(!isMaximized)} 
                   className="hover:bg-white/10 p-2 rounded-lg transition-colors"
-                  title={isMaximized ? "Réduire" : "Agrandir"}
                 >
                   {isMaximized ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                 </button>
@@ -180,11 +179,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
                         ? 'bg-primary text-white rounded-tr-none shadow-lg shadow-primary/20' 
                         : 'bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 rounded-tl-none'
                     }`}>
-                      {msg.role === 'user' ? (
-                    msg.content
-                  ) : (
-                    <FormattedText text={msg.content} className="text-foreground" />
-                  )}
+                      <FormattedText text={msg.content} className={msg.role === 'user' ? 'text-white' : 'text-foreground dark:text-slate-100'} />
                     </div>
                   </div>
                 </motion.div>
@@ -200,7 +195,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
               )}
             </div>
 
-            {/* Input */}
+            {/* Input Area */}
             <form onSubmit={handleSend} className="p-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-white/5">
               <div className="relative group">
                 <input
@@ -208,7 +203,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Posez votre question..."
-                  className="w-full pl-4 pr-12 py-3 bg-card border border-slate-200 dark:border-white/10 rounded-2xl focus:ring-2 focus:ring-primary outline-none transition-all text-sm"
+                  className="w-full pl-4 pr-12 py-3 bg-card/50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-2xl focus:ring-2 focus:ring-primary outline-none transition-all text-sm"
                 />
                 <div className="absolute right-2 top-1.5 flex gap-1 items-center">
                   <button
@@ -219,14 +214,13 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
                         ? 'bg-red-500 text-white animate-pulse' 
                         : 'bg-slate-100 dark:bg-white/10 text-slate-400 hover:text-primary'
                     }`}
-                    title="Parler"
                   >
                     {isListening ? <MicOff size={18} /> : <Mic size={18} />}
                   </button>
                   <button
                     type="submit"
                     disabled={!input.trim() || isTyping}
-                    className="p-2 bg-primary text-white rounded-xl shadow-md shadow-primary/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100 transition-all"
+                    className="p-2 bg-primary text-white rounded-xl shadow-md disabled:opacity-50 transition-all"
                   >
                     {isTyping ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                   </button>

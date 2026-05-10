@@ -86,6 +86,13 @@ class RAGEngine:
         try:
             from main import StudentInput, _preprocess, _categorize, app_state, generate_ai_recommendation
             
+            # Validation préventive pour éviter de polluer les logs si le profil est incomplet
+            required_fields = StudentInput.__annotations__.keys()
+            missing = [f for f in required_fields if f not in user.profile_data]
+            if missing:
+                # logger.debug(f"Profile incomplete for {user.email}, skipping RAG update.")
+                return
+
             student_input = StudentInput(**user.profile_data)
             X_scaled = _preprocess(student_input)
             

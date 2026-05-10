@@ -70,10 +70,10 @@ const steps = [
     { label: 'Université', value: 'College' },
     { label: 'Master / Doctorat', value: 'Postgraduate' }
   ]},
-  { id: 'Distance_from_School', question: "Habites-tu loin de l'école ?", icon: <MapPin size={40} />, type: 'select', options: [
-    { label: 'C\'est tout près', value: 'Low' },
-    { label: 'Distance moyenne', value: 'Medium' },
-    { label: 'Oui, c\'est loin', value: 'High' }
+  { id: 'Distance_from_Home', question: "Habites-tu loin de l'école ?", icon: <MapPin size={40} />, type: 'select', options: [
+    { label: 'C\'est tout près (Near)', value: 'Near' },
+    { label: 'Distance moyenne (Moderate)', value: 'Moderate' },
+    { label: 'Oui, c\'est loin (Far)', value: 'Far' }
   ]},
   { id: 'Gender', question: "Tu es...", icon: <User size={40} />, type: 'select', options: [
     { label: 'Un garçon', value: 'Male' },
